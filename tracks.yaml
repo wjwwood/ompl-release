@@ -101,14 +101,14 @@ tracks:
       :{release_inc}
     devel_branch: null
     last_version: 1.2.1
-    name: upstream
+    name: ompl
     patches: kinetic
     release_inc: '1'
     release_repo_url: null
     release_tag: :{ask}
     ros_distro: kinetic
-    vcs_type: hg
-    vcs_uri: https://bitbucket.org/ompl/ompl
+    vcs_type: git
+    vcs_uri: https://github.com/v4hn/ompl.git
     version: :{ask}
   lunar:
     actions:
