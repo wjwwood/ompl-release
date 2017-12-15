@@ -44,6 +44,7 @@ set(OMPL_DEMO_INSTALL_DIR "${CMAKE_INSTALL_DATAROOTDIR}/ompl/demos"
 
 include_directories("${OMPL_INCLUDE_DIR}")
 
+
 if(MSVC)
     add_definitions(-DBOOST_ALL_NO_LIB)
     add_definitions(-DBOOST_PROGRAM_OPTIONS_DYN_LINK)
@@ -55,16 +56,8 @@ else(IS_ICPC)
     add_definitions(-DBOOST_TEST_DYN_LINK)
 endif(IS_ICPC)
 
-find_package(Boost 1.54 COMPONENTS serialization filesystem system program_options REQUIRED)
-include_directories(${Boost_INCLUDE_DIR})
-
-# Add support in Boost::Python for std::shared_ptr
-# This is a hack that replaces boost::shared_ptr related code with std::shared_ptr.
-# Proper support for std::shared_ptr was added in Boost 1.63.
-if(Boost_VERSION VERSION_LESS "106300")
-    include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/external")
-endif()
-
+find_package(Boost 1.54 COMPONENTS serialization filesystem system program_options unit_test_framework REQUIRED)
+include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 
 # on OS X we need to check whether to use libc++ or libstdc++ with clang++
 if(APPLE AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -90,23 +83,7 @@ find_package(Threads QUIET)
 enable_testing()
 
 find_package(Python QUIET)
-find_boost_python()
-
-if(PYTHON_FOUND)
-    # PyPy is more than an order of magnitude faster in generating the Python
-    # bindings than CPython, so use it if available.
-    find_program(PYPY NAMES pypy${PYTHON_VERSION_MAJOR} pypy)
-    if(PYPY)
-        option(OMPL_USE_PYPY "Use PyPy for generating Python bindings" ON)
-    else()
-        option(OMPL_USE_PYPY "Use PyPy for generating Python bindings" OFF)
-    endif()
-    if(OMPL_USE_PYPY)
-        set(PYTHON_BINDING_EXEC "${PYPY}")
-    else()
-        set(PYTHON_BINDING_EXEC "${PYTHON_EXEC}")
-    endif()
-endif()
+find_package(Boost COMPONENTS python QUIET)
 
 # Eigen is needed for the InformedStateSampler
 find_package(Eigen3 QUIET)
@@ -124,21 +101,20 @@ find_package(OpenDE QUIET)
 set(OMPL_EXTENSION_OPENDE ${OPENDE_FOUND})
 if (OPENDE_FOUND)
   add_definitions(${OPENDE_DEFINITIONS})
-  include_directories(${OPENDE_INCLUDE_DIR})
+  include_directories(SYSTEM ${OPENDE_INCLUDE_DIR})
 endif()
 
 find_package(Triangle QUIET)
 set(OMPL_EXTENSION_TRIANGLE ${TRIANGLE_FOUND})
 if (TRIANGLE_FOUND)
-  include_directories(${TRIANGLE_INCLUDE_DIR})
+  include_directories(SYSTEM ${TRIANGLE_INCLUDE_DIR})
 endif()
 
 # If FLANN is installed, a wrapper for its nearest neighbor data structures can be used
 find_package(flann 1.8.3 QUIET)
 if (FLANN_FOUND)
     set(OMPL_HAVE_FLANN 1)
-    include_directories("${FLANN_INCLUDE_DIRS}")
-    link_directories(${FLANN_LIBRARY_DIRS})
+    include_directories(SYSTEM "${FLANN_INCLUDE_DIRS}")
 endif()
 
 # R is needed for running Planner Arena locally
