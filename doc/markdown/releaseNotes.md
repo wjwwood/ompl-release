@@ -1,7 +1,47 @@
 # Release Notes
 
 
-# OMPL 1.0.0 (October 26, 2015)
+# OMPL 1.2.1 (July 1, 2016)
+
+- New simplified installation instructions. There is now also a [installation script](http://ompl.kavrakilab.org/install-ompl-ubuntu.sh) that will download and install OMPL and all its dependencies on Ubuntu 14.04, 15.10, and 16.04.
+- Fixed python bindings for gcc5. Python bindings still take a [very long time](https://github.com/gccxml/pygccxml/issues/56) to generate.
+- Misc. small bug fixes.
+
+
+# OMPL 1.2.0 (June 20, 2016)
+
+- C++11 is now **required**. A lot of Boost usage in older versions of OMPL has been replaced with C++11 STL equivalents.
+- Added several new planners and improved existing planners:
+  - Stable Sparse RRT, both a [geometric](\ref gSST) and a [control-based](\ref cSST) version. SST is an asymptotically near-optimal incremental version of RRT.
+  - [Vector Field RRT](\ref gVFRRT), a tree-based motion planner that tries to minimize the so-called upstream cost of a path. The upstream cost is defined by an integral over a user-defined vector field.
+  - [A bidirectional version of FMT](\ref gBFMT), small fixes in FMT.
+  - A new version of [Expansive Space Trees](\ref gEST) that does not rely on projections to estimate sampling density. Instead, it estimates density directly in the configuration space. This is closer to the original paper and actually works really well! There is now also a [bidirectional version of EST](\ref gBiEST). The previous implementation of EST has been renamed to [ProjEST](\ref gProjEST).
+- Minimum Boost version is now 1.54.
+
+
+# OMPL 1.1.0 (October 28, 2015)
+
+- Added several new and updated planners:
+  - [Lightning](\ref Lightning): the Lightning Framework is a experienced-based motion planner that recalls from a database of previously generated paths the most similar one to the current planning problem and attempts to repair it, while at the same time planning from scratch in a different thread.
+  - [Thunder](\ref Thunder): the Thunder Framework is essentially an improved version of Lightning. It stores previously generated paths in a combined roadmap, thereby offering more opportunities for reuse of partial paths. The roadmap is sparse while still guaranteeing asymptotic near-optimality. This is done by borrowing ideas from the SPARS algorithm.
+  - [Informed RRT*](\ref gInformedRRTstar): a variant of RRT* that uses heuristics to bound the search for optimal solutions.
+  - [Batch Informed Trees (BIT*)](\ref gBITstar): an anytime asymptotically optimal algorithm that uses heuristics to order and bound the search for optimal solutions.
+  - An updated version of the Lower-Bound Tree Rapidly-expanding Random Tree (LBT-RRT) and a lazy version, LazyLBTRRT. These algorithms use Lifelong Planning A* and Dynamic Single-Source Shortest Path over graphs as subroutines, but these subroutines might be more generally useful in other algorithms as well.
+  - An updated version of [TRRT](\ref gTRRT) as well as a bidirectional version of TRRT ([BiTRRT](\ref gBiTRRT))
+  - An updated version of [FMT*](\ref gFMT) that, among other things, caches collision checks.
+- [New web-based based version of OMPL.app!](http://omplapp.kavrakilab.org) The web app has all the functionality of the standalone GUI. In addition, it allows you to interactively construct benchmark jobs that can be submitted to a benchmark server. We have a public version of the web app and benchmarking server running at http://omplapp.kavrakilab.org, but the web app and benchmark server can also be run locally.
+- There are two new concepts, ompl::base::InformedSampler and ompl::base::InformedStateSampler, that capture the idea of using information about the state space and the current solution cost to limit future search to a planning subproblem that contains all possibly better solutions. The ompl::base::PathLengthDirectInfSampler is derived from InformedStateSampler and can be used to limit sampling to only those states that can lead to a shorter path than the best-found solution so far. This sampler is used in ompl::geometric:InformedRRTstar and ompl::geometric::BITstar.
+- The ompl::geometric::PathSimplifier can now also optimize a path with respect to a (sampleable) goal. This means, for example, that a solution path is no longer “stuck” with an awkward inverse kinematics solution for a goal.
+- Added a `plannerarena` script to simplify running [Planner Arena](http://plannerarena.org) locally.
+- Added a new planner termination conditions that allow one to terminate after a fixed number of iterations.
+- The GNAT data structure for nearest neighbor queries has been updated and should be faster in general. There is now also non-threadsafe version of the GNAT data structure that is automatically selected for single-threaded planners. This version should be even faster.
+- Added an option to turn off the path simplification in benchmarking.
+- Added support for parametrized benchmarks. Planner Arena can show performance across values for a given parameter.
+- Made it easier to get repeatable runs of an algorithm by enabling the user to set the seed of the *local* random number generators (i.e., not just the global seed).
+- The [OMPL blog](http://ompl.kavrakilab.org/blog.html) is now [Jekyll](http://www.jekyllrb.com)-based and hosted as a [repository on GitHub](https://github.com/ompl/blog). If you have a project that uses OMPL, you can send us a pull request (please check with us first whether it would be appropriate for the blog before you write content).
+
+
+# OMPL 1.0.0 (October 26, 2014)
 
 - Added many new planners:
   - [Linear Temporal Logical Planner (LTLPlanner)](\ref cLTLPlanner): a planner that finds solutions for kinodynamic motion planning problems where the goal is specified by a Linear Temporal Logic (LTL) specification.
@@ -97,7 +137,7 @@
 # OMPL 0.11.1 (July 26, 2012)
 
 - Fixed bug in RRT* where nearest neighbor radius shrinks too fast.
-- Added option for versioned installs: multiple versions of OMPL can be installed simultaneously (disabled by default). This is enabled by running <tt>cmake -DOMPL_VERSIONED_INSTALL=ON</tt>.
+- Added option for versioned installs: multiple versions of OMPL can be installed simultaneously (disabled by default). This is enabled by running `cmake -DOMPL_VERSIONED_INSTALL=ON`.
 - Bug and documentation fixes.
 
 
