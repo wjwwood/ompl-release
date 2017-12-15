@@ -1,3 +1,26 @@
+## ompl (indigo) - 1.2.3-0
+
+The packages in the `ompl` repository were released into the `indigo` distro by running `/usr/local/bin/bloom-release -r indigo -t indigo ompl --override-release-repository-url https://github.com/wjwwood/ompl-release -e` on `Fri, 15 Dec 2017 00:20:11 -0000`
+
+The `ompl` package was released.
+
+Version of package(s) in repository `ompl`:
+
+- upstream repository: https://github.com/v4hn/ompl.git
+- release repository: https://github.com/ros-gbp/ompl-release.git
+- rosdistro version: `1.0.3094-0`
+- old version: `1.0.3094-0`
+- new version: `1.2.3-0`
+
+Versions of tools used:
+
+- bloom version: `0.6.1`
+- catkin_pkg version: `0.3.9`
+- rosdep version: `0.11.8`
+- rosdistro version: `0.6.2`
+- vcstools version: `0.1.39`
+
+
 ## ompl (lunar) - 1.3.2-2
 
 The packages in the `ompl` repository were released into the `lunar` distro by running `/usr/bin/bloom-release ompl -r lunar -t lunar` on `Mon, 13 Nov 2017 03:17:00 -0000`
