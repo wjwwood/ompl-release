@@ -24,12 +24,6 @@ if(MSVC OR MSVC90 OR MSVC10)
     set(MSVC ON)
 endif (MSVC OR MSVC90 OR MSVC10)
 
-# add "${prefix}/share/cmake/Modules", which is where Eigen3's module is in MacPorts.
-if(${CMAKE_VERSION} VERSION_LESS 2.8.12)
-    get_filename_component(CMAKE_ROOT_DIR "${CMAKE_ROOT}" PATH)
-else()
-    get_filename_component(CMAKE_ROOT_DIR "${CMAKE_ROOT}" DIRECTORY)
-endif()
 set(CMAKE_MODULE_PATH
     "${CMAKE_MODULE_PATH}"
     "${CMAKE_ROOT_DIR}/cmake/Modules"
@@ -45,7 +39,7 @@ set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 set(OMPL_CMAKE_UTIL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules"
     CACHE FILEPATH "Path to directory with auxiliary CMake scripts for OMPL")
 set(OMPL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
-set(OMPL_DEMO_INSTALL_DIR "share/ompl${OMPL_INSTALL_SUFFIX}/demos"
+set(OMPL_DEMO_INSTALL_DIR "${CMAKE_INSTALL_DATAROOTDIR}/ompl/demos"
     CACHE STRING "Relative path to directory where demos will be installed")
 
 include_directories("${OMPL_INCLUDE_DIR}")
@@ -143,15 +137,29 @@ configure_file("${pkg_conf_file}.in" "${pkg_conf_file}" @ONLY)
 install(FILES "${pkg_conf_file}"
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig/
   COMPONENT ompl
-  RENAME "ompl${OMPL_INSTALL_SUFFIX}.pc")
+  RENAME "ompl.pc")
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/doc/markdown/FindOMPL.cmake"
-  DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/ompl${OMPL_INSTALL_SUFFIX}"
-  COMPONENT ompl
-  RENAME ompl-config.cmake)
+if (NOT ${CMAKE_VERSION} VERSION_LESS 2.8.8)
+    include(CMakePackageConfigHelpers)
+    set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR})
+    set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
+    configure_package_config_file(omplConfig.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/omplConfig.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/ompl/cmake
+        PATH_VARS INCLUDE_INSTALL_DIR LIB_INSTALL_DIR
+        NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+    write_basic_package_version_file(
+        ${CMAKE_CURRENT_BINARY_DIR}/omplConfigVersion.cmake
+        VERSION ${OMPL_VERSION}
+        COMPATIBILITY SameMajorVersion)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/omplConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/omplConfigVersion.cmake
+        DESTINATION ${LIB_INSTALL_DIR}/cmake/ompl
+        COMPONENT ompl)
+endif()
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/ompl.conf"
-  DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/ompl${OMPL_INSTALL_SUFFIX}"
+  DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/ompl"
   COMPONENT ompl)
 
 # script to install ompl on Ubuntu
@@ -166,21 +174,6 @@ configure_file(
 add_custom_target(uninstall
   COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
-if (OMPL_VERSIONED_INSTALL)
-  # script to create sym links
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/create_symlinks.sh.in"
-    "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/create_symlinks.sh" @ONLY)
-  execute_process(COMMAND
-    "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/create_symlinks.sh"
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
-  install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/.symlinks/" DESTINATION .)
-  # script to uninstall sym links
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/uninstall_symlinks.sh.in"
-    "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/uninstall_symlinks.sh" @ONLY)
-  add_custom_target(uninstall_links COMMAND
-    "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/uninstall_symlinks.sh")
-  add_dependencies(uninstall uninstall_links)
-endif()
 include(CPackSettings)
 
 option(OMPL_REGISTRATION "Enable one-time registration of OMPL" ON)
