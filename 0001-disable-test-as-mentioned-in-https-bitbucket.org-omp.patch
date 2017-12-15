@@ -1,7 +1,7 @@
-From 7aa76690880def9544af9791a60f8be92f52edb9 Mon Sep 17 00:00:00 2001
+From 695f629c36d0c88b910db19c8be2681829870a92 Mon Sep 17 00:00:00 2001
 From: Vincent Rabaud <vincent.rabaud@gmail.com>
 Date: Sat, 19 Nov 2016 19:02:09 +0100
-Subject: [PATCH] disable test as mentioned in
+Subject: [PATCH 1/2] disable test as mentioned in
  https://bitbucket.org/ompl/ompl/issues/293/ompl-build-timeout-on-ros-buildfarm
 
 ---

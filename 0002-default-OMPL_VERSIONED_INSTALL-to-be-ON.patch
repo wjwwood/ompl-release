@@ -1,0 +1,25 @@
+From d179eb148522fcee49ee66e6906eba07f1a2131f Mon Sep 17 00:00:00 2001
+From: William Woodall <william+github@osrfoundation.org>
+Date: Thu, 14 Dec 2017 17:16:15 -0800
+Subject: [PATCH 2/2] default OMPL_VERSIONED_INSTALL to be ON
+
+---
+ CMakeModules/OMPLUtils.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeModules/OMPLUtils.cmake b/CMakeModules/OMPLUtils.cmake
+index ea12a03..569f2e2 100644
+--- a/CMakeModules/OMPLUtils.cmake
++++ b/CMakeModules/OMPLUtils.cmake
+@@ -76,7 +76,7 @@ function(target_link_flags)
+     set(${ARGV0}_PKG_DEPS "${_pkg_dep_str}" PARENT_SCOPE)
+ endfunction()
+ 
+-option(OMPL_VERSIONED_INSTALL "Install header files in include/ompl-X.Y/ompl, where X and Y are the major and minor version numbers" OFF)
++option(OMPL_VERSIONED_INSTALL "Install header files in include/ompl-X.Y/ompl, where X and Y are the major and minor version numbers" ON)
+ if (OMPL_VERSIONED_INSTALL)
+     set(CMAKE_INSTALL_INCLUDEDIR "include/ompl-${OMPL_MAJOR_VERSION}.${OMPL_MINOR_VERSION}")
+ endif()
+-- 
+2.14.3 (Apple Git-98)
+
